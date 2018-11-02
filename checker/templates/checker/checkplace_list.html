@@ -1,0 +1,12 @@
+<table class="table">
+      <tr>
+          <th>Nom</th>
+          <th>Controle sur ce lieu</th>
+      </tr>
+      {% for check_place in object_list %}
+          <tr>
+              <td>{{ check_place.name }}</td>
+              <td><a href="{% url "add_check" check_place.pk %}">Lien</a></td>
+          </tr>
+      {% endfor %}
+</table>

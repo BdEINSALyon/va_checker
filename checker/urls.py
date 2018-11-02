@@ -1,0 +1,10 @@
+from django.urls import path, include
+from django.views.generic import ListView
+from . import views
+from .models import CheckPlace
+from django.contrib.auth.decorators import login_required
+
+urlpatterns = [
+    path('', ListView.as_view(model=CheckPlace,), name='list_check_place'),
+    path('add_check/<int:pk>', views.add_check, name='add_check'),
+]
