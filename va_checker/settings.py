@@ -105,7 +105,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+ADHESION_CLIENT_ID=os.environ.get("ADHESION_CLIENT_ID")
+ADHESION_CLIENT_SECRET=os.environ.get("ADHESION_CLIENT_SECRET")
+ADHESION_URL=os.environ.get("ADHESION_URL", "https://api.adhesion.bde-insa-lyon.fr") #sans le / à la fin
+
+
+LANGUAGE_CODE = 'fr-f'
 
 TIME_ZONE = 'UTC'
 
