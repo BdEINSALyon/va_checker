@@ -42,12 +42,12 @@
                 <div class="card-body">
                     <form method="post" action="">
                         {% csrf_token %}
-                        {{form.as_p}}
+                        <p>{{form.card_number}}</p>
                         <button class="btn btn-primary" style="width:100%">Enregistrer</button>
                     </form>
                 </div>
               <div class="card-footer text-muted">
-                2 days ago
+                Déjà {{place.today_check}} client{{place.today_check|pluralize}} aujourd'hui
               </div>
             </div>
         </div>

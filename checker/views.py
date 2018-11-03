@@ -8,7 +8,7 @@ from django.utils import timezone
 def add_check(request, pk):
     form = AddCheckForm(request.POST or None)
     check_place = CheckPlace.objects.get(pk=pk)
-    form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'cXXXXXXXXXXXX'})
+    form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
     res={}
     if form.is_valid():
         res['state']=True
@@ -43,7 +43,7 @@ def add_check(request, pk):
                 check.save()
                 request.POST = None
                 form = AddCheckForm(None)
-                form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus', 'required': 'required', 'placeholder': 'cXXXXXXXXXXXX'})
+                form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus', 'required': 'required', 'placeholder': 'Numéro de carte VA'})
             else:
                 res['state'] = "notvamember"
         else:

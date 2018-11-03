@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 # Create your models here.
 
 class CheckPlace(models.Model):
@@ -9,8 +9,9 @@ class CheckPlace(models.Model):
     def __str__(self):
         return self.name
     @property
-    def nombre_passage(self):
-        return self.checks.count()
+    def today_check(self):
+        date_jour=timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        return self.checks.filter(created_at__gte=date_jour).all().count()
 
 class Check(models.Model):
     student_id = models.IntegerField(verbose_name="ID sur Adhésion", blank=True, null=True)

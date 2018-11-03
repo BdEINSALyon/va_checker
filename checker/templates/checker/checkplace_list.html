@@ -26,7 +26,7 @@
               <div class="card-footer text-muted">
                   Bonjour {{ user.username }}<br/>
                   {% if user.is_staff %}<a href="{% url "admin:index" %}">Ouvrir l'administration</a><br/>{% endif %}
-                  <a href="{% url "logout"%}">Se déconnecter</a>
+                  <a href="{% url "logout"%}?next=/">Se déconnecter</a>
               </div>
             </div>
         </div>
