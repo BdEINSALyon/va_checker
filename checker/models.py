@@ -5,6 +5,7 @@ from django.db import models
 class CheckPlace(models.Model):
     name = models.CharField(verbose_name='Nom', blank=False, max_length=255, null=False)
     is_active = models.BooleanField(verbose_name="Actif ?", default=True)
+    legit_delta = models.IntegerField(verbose_name="Temps min en minutes entre 2 passage", blank=False, null=False)
     def __str__(self):
         return self.name
     @property

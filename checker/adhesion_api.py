@@ -44,7 +44,7 @@ class AdhesionAPI():
             logger.warning("Token expiré, on réessaie")
             self.refresh_token(needsRefresh=True) #visiblement y'a pas de refresh token avec une Application "client credentials"
             r = requests.get(url, headers={'Authorization': "Bearer " + self.token['access_token']}, **kwargs)
-        if r.status_code not in [status.HTTP_200_OK, status.HTTP_201_CREATED, status.HTTP_202_ACCEPTED]:
+        if r.status_code not in [status.HTTP_200_OK, status.HTTP_201_CREATED, status.HTTP_202_ACCEPTED, status.HTTP_404_NOT_FOUND]:
             raise APIException("Une erreur est survenue lors de la connexion à un serveur externe")
         return r
         #try:

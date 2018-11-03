@@ -1,20 +1,49 @@
-<form method="post" action="">
-    {% csrf_token %}
-    {% for error in form.non_field_errors %}
-        <div class="form-group has-errors text-danger small">
-            {{error}}
-        </div>
-    {% endfor %}
-    {% for field in form %}
-        <div class="form-group has-errors text-danger small">
-            {{field.errors}}
-        </div>
-        <div class="form-group">
-        <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
-            <small class="form-text text-muted">{{ field.help_text }}</small>
-            {{field}}
+{% extends "base.html" %}
+{% block meta %}
+    {% if res.state != "begin" %}
+        <meta http-equiv="refresh" content="20; URL={% url "add_check" place.pk%}" />
+    {% endif %}
+{% endblock %}
 
+{% block content %}
+    <div class="row justify-content-md-center"><h2>{{place.name}}</h2></div>
+
+    {% if res.state != "begin" %}
+        {% if res.state == "cardnotfound" %}
+            <div class="jumbotron" style="background-color: lightcoral">
+            <h1 class="display-7">Carte VA non trouvée</h1>
+            <p class="lead">Carte : {{res.card_number}}</p>
+            </div>
+        {% elif res.state == "seemslegit" %}
+            <div class="jumbotron" style="background-color:forestgreen">
+            <h1 class="display-7">{% if res.gender == "M" %}<i class="fas fa-mars fa-lg"></i>{% elif res.gender == "W" %}<i class="fas fa-venus fa-lg"></i>{% endif %} {{res.first_name}} {{res.last_name}}</h1>
+            <p class="lead">Dernier passage : Il y a {{res.last_seen|timesince}} ({{res.last_seen}})</p>
         </div>
-    {% endfor %}
-<button class="btn btn-primary" style="width:100%">Enregistrer</button>
-</form>
+        {% elif res.state == "seemsnotlegit" %}
+            <div class="jumbotron" style="background-color:darkorange">
+                <h1 class="display-5">Passé il y a peu !</h1>
+            <h1 class="display-7">{% if res.gender == "M" %}<i class="fas fa-mars fa-lg"></i>{% elif res.gender == "W" %}<i class="fas fa-venus fa-lg"></i>{% endif %} {{res.first_name}} {{res.last_name}}</h1>
+            <p class="lead">Dernier passage : Il y a {{res.last_seen|timesince}} ({{res.last_seen}})</p>
+        </div>
+        {% endif %}
+    {% endif %}
+    <div class="row justify-content-md-center">
+        <div class="col-6">
+            <div class="card text-center">
+                <div class="card-header">
+                    Vérifier un passage
+                </div>
+                <div class="card-body">
+                    <form method="post" action="">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <button class="btn btn-primary" style="width:100%">Enregistrer</button>
+                    </form>
+                </div>
+              <div class="card-footer text-muted">
+                2 days ago
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
