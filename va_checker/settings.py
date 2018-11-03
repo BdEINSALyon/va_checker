@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,9 +24,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '*@81+5l9uosp0(@*e*p*)uk3gf4$xackecvpah#+*hv7u+7*^b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DJANGO_ENV', 'prod') == 'dev'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['va-checker.app.bde-insa-lyon.fr']
+
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost'])
 
 
 # Application definition
@@ -76,10 +80,7 @@ WSGI_APPLICATION = 'va_checker.wsgi.application'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+    'default': dj_database_url.config(default='sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3'), conn_max_age=600)
 }
 
 
@@ -110,9 +111,9 @@ ADHESION_CLIENT_SECRET=os.environ.get("ADHESION_CLIENT_SECRET")
 ADHESION_URL=os.environ.get("ADHESION_URL", "https://api.adhesion.bde-insa-lyon.fr") #sans le / à la fin
 
 
-LANGUAGE_CODE = 'fr-f'
+LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
