@@ -5,6 +5,6 @@ from .models import CheckPlace
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
-    path('', ListView.as_view(model=CheckPlace,), name='list_check_place'),
-    path('add_check/<int:pk>', views.add_check, name='add_check'),
+    path('', login_required(ListView.as_view(model=CheckPlace,)), name='list_check_place'),
+    path('add_check/<int:pk>', login_required(views.add_check), name='add_check'),
 ]

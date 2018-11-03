@@ -20,7 +20,7 @@ def add_check(request, pk):
             res['first_name'] = card['first_name']
             res['last_name'] = card['last_name']
             res['gender'] = card['gender']
-            if res['valid_member']:
+            if card['valid_member']:
                 check = Check()
                 try:
                     passage = Check.objects.filter(student_id=card['member']).filter(check_place=check_place).latest('created_at')

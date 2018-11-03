@@ -1,12 +1,34 @@
-<table class="table">
-      <tr>
-          <th>Nom</th>
-          <th>Controle sur ce lieu</th>
-      </tr>
-      {% for check_place in object_list %}
-          <tr>
-              <td>{{ check_place.name }}</td>
-              <td><a href="{% url "add_check" check_place.pk %}">Lien</a></td>
-          </tr>
-      {% endfor %}
-</table>
+{% extends "base.html" %}
+{% block content %}
+    <div class="row justify-content-md-center">
+        <div class="col-8">
+            <img src="https://logos.bde-insa-lyon.fr/bde/bde.svg" alt="" width="150">
+            <div class="card text-center">
+                <div class="card-header">
+                    Liste des points de vérification
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Ouvrir contrôle</th>
+                            <th width="5%">Stats</th>
+                        </tr>
+                        {% for check_place in object_list %}
+                            <tr>
+                                <td>{{ check_place.name }}</td>
+                                <td><a href="{% url "add_check" check_place.pk %}">Lien</a></td>
+                                <td>Coming</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+              <div class="card-footer text-muted">
+                  Bonjour {{ user.username }}<br/>
+                  {% if user.is_staff %}<a href="{% url "admin:index" %}">Ouvrir l'administration</a><br/>{% endif %}
+                  <a href="{% url "logout"%}">Se déconnecter</a>
+              </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
