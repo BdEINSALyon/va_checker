@@ -14,10 +14,16 @@
             <h1 class="display-7">Carte VA non trouvée</h1>
             <p class="lead">Carte : {{res.card_number}}</p>
             </div>
+        {% elif res.state == "notvamember" %}
+            <div class="jumbotron" style="background-color: lightcoral">
+                <h1 class="display-5">Pas adhérent VA cette année !</h1>
+                <h1 class="display-7">{% if res.gender == "M" %}<i class="fas fa-mars fa-lg"></i>{% elif res.gender == "W" %}<i class="fas fa-venus fa-lg"></i>{% endif %} {{res.first_name}} {{res.last_name}}</h1>
+                <p class="lead">Carte : {{res.card_number}}</p>
+            </div>
         {% elif res.state == "seemslegit" %}
             <div class="jumbotron" style="background-color:forestgreen">
             <h1 class="display-7">{% if res.gender == "M" %}<i class="fas fa-mars fa-lg"></i>{% elif res.gender == "W" %}<i class="fas fa-venus fa-lg"></i>{% endif %} {{res.first_name}} {{res.last_name}}</h1>
-            <p class="lead">Dernier passage : Il y a {{res.last_seen|timesince}} ({{res.last_seen}})</p>
+            <p class="lead">Dernier passage : {% if res.last_seen is not None %} Il y a {{res.last_seen|timesince}} ({{res.last_seen}}) {% else %}Jamais{% endif %}</p>
         </div>
         {% elif res.state == "seemsnotlegit" %}
             <div class="jumbotron" style="background-color:darkorange">
