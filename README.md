@@ -4,9 +4,12 @@ Micro-app de contrôle des cartes VA et de réalisations de statistiques aux poi
 ## Env variables
 
 ```
-ENV DATABASE_URL postgres://mapp@db/mapp
+ENV DATABASE_URL postgres://va-checker@db/va-checker
 ENV SECRET_KEY ''
 ENV DJANGO_ENV ''
+ENV ADHESION_CLIENT_ID ''
+ENV ADHESION_CLIENT_SECRET ''
+ENV ADHESION_URL ''
 ```
 
 ## Licence
