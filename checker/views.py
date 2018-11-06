@@ -13,6 +13,7 @@ def add_check(request, pk):
     if form.is_valid():
         res['state']=True
         card_number = form.cleaned_data['card_number']
+        form = AddCheckForm(None) #On clean directement un formulaire vide
         res['card_number']=card_number
         api=AdhesionAPI()
         card=api.get_infos_card(card_number)
@@ -42,12 +43,11 @@ def add_check(request, pk):
                 check.check_place = check_place
                 check.save()
                 request.POST = None
-                form = AddCheckForm(None)
-                form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus', 'required': 'required', 'placeholder': 'Numéro de carte VA'})
             else:
                 res['state'] = "notvamember"
         else:
             res['state'] = "cardnotfound"
     else:
         res['state']="begin"
+    form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
     return render(request, 'checker/add_check_form.html', {'form': form, 'place':check_place, 'res':res})
