@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from .forms import AddCheckForm
-from .models import CheckPlace, Check
-from checker.adhesion_api import AdhesionAPI
 from django.utils import timezone
 
-# Create your views here.
+from checker.adhesion_api import AdhesionAPI
+from .forms import AddCheckForm
+from .models import CheckPlace, Check, Screen
+
+
 def add_check(request, pk):
     form = AddCheckForm(request.POST or None)
     check_place = CheckPlace.objects.get(pk=pk)
@@ -27,7 +28,7 @@ def add_check(request, pk):
                     passage = Check.objects.filter(student_id=card['member']).filter(check_place=check_place).latest('created_at')
                     res['last_seen'] = passage.created_at
                     delta_minutes=(timezone.now() - passage.created_at).seconds // 60
-                    if(delta_minutes<check_place.legit_delta):
+                    if delta_minutes < check_place.legit_delta:
                         res['state'] = "seemsnotlegit"
                         check.seems_legit=False
                     else:
@@ -50,4 +51,12 @@ def add_check(request, pk):
     else:
         res['state']="begin"
     form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
-    return render(request, 'checker/add_check_form.html', {'form': form, 'place':check_place, 'res':res})
+    return render(request, 'checker/add_check_form.html', {'form': form, 'place': check_place, 'res': res})
+
+
+def screen(request, token_screen):
+    try:
+        screen = Screen.objects.get(token=token_screen)
+        return add_check(request, screen.check_place.pk)
+    except:
+        return render(request, 'checker/display_new_screen.html', {"token": token_screen})

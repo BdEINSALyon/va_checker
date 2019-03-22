@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import os
 import dj_database_url
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,12 +24,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.getenv('SECRET_KEY', '*@81+5l9uosp0(@*e*p*)uk3gf4$xackecvpah#+*hv7u+7*^b')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DJANGO_ENV', 'prod') == 'dev'
+DEBUG = os.getenv('DJANGO_ENV', 'dev') == 'dev'
 
 ALLOWED_HOSTS = ['va-checker.app.bde-insa-lyon.fr']
 
 if DEBUG:
     ALLOWED_HOSTS.extend(['localhost'])
+    ALLOWED_HOSTS.extend(['127.0.0.1'])
 
 
 # Application definition
@@ -125,7 +126,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_DIRS = (
