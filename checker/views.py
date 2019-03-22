@@ -1,12 +1,14 @@
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.cache import cache_control
 
 from checker.adhesion_api import AdhesionAPI
 from .forms import AddCheckForm
 from .models import CheckPlace, Check, Screen
 
 
+@cache_control(must_revalidate=True, no_store=True)
 def add_check(request, pk, screen_token=None):
     form = AddCheckForm(request.POST or None)
     check_place = CheckPlace.objects.get(pk=pk)
@@ -61,6 +63,7 @@ def add_check(request, pk, screen_token=None):
                   {'form': form, 'place': check_place, 'res': res, 'url_refresh': url_refresh})
 
 
+@cache_control(must_revalidate=True, no_store=True)
 def screen(request, token_screen):
     screen = Screen.objects.filter(token=token_screen)
     if screen.count() == 1:
