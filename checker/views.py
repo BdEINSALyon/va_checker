@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils import timezone
 
 from checker.adhesion_api import AdhesionAPI
@@ -6,9 +7,13 @@ from .forms import AddCheckForm
 from .models import CheckPlace, Check, Screen
 
 
-def add_check(request, pk):
+def add_check(request, pk, screen_token=None):
     form = AddCheckForm(request.POST or None)
     check_place = CheckPlace.objects.get(pk=pk)
+    if screen_token is None:
+        url_refresh = reverse("add_check", args=[check_place.pk])
+    else:
+        url_refresh = reverse("screen", args=[screen_token])
     form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
     res={}
     if form.is_valid():
@@ -19,6 +24,7 @@ def add_check(request, pk):
         api=AdhesionAPI()
         card=api.get_infos_card(card_number)
         if(card is not None):
+
             res['first_name'] = card['first_name']
             res['last_name'] = card['last_name']
             res['gender'] = card['gender']
@@ -27,8 +33,8 @@ def add_check(request, pk):
                 try:
                     passage = Check.objects.filter(student_id=card['member']).filter(check_place=check_place).latest('created_at')
                     res['last_seen'] = passage.created_at
-                    delta_minutes=(timezone.now() - passage.created_at).seconds // 60
-                    if delta_minutes < check_place.legit_delta:
+                    delta_minutes = timezone.now() - passage.created_at
+                    if delta_minutes.total_seconds() < check_place.legit_delta * 60:
                         res['state'] = "seemsnotlegit"
                         check.seems_legit=False
                     else:
@@ -51,12 +57,13 @@ def add_check(request, pk):
     else:
         res['state']="begin"
     form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
-    return render(request, 'checker/add_check_form.html', {'form': form, 'place': check_place, 'res': res})
+    return render(request, 'checker/add_check_form.html',
+                  {'form': form, 'place': check_place, 'res': res, 'url_refresh': url_refresh})
 
 
 def screen(request, token_screen):
-    try:
-        screen = Screen.objects.get(token=token_screen)
-        return add_check(request, screen.check_place.pk)
-    except:
+    screen = Screen.objects.filter(token=token_screen)
+    if screen.count() == 1:
+        return add_check(request, screen[0].check_place.pk, screen[0].token)
+    else:
         return render(request, 'checker/display_new_screen.html', {"token": token_screen})

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block meta %}
     {% if res.state != "begin" %}
-        <meta http-equiv="refresh" content="20; URL={% url "add_check" place.pk%}" />
+        <meta http-equiv="refresh" content="20; URL={{ url_refresh }}"/>
     {% endif %}
 {% endblock %}
 
 {% block content %}
-    <div class="row justify-content-md-center"><h2>{{place.name}}</h2></div>
+    <div class="row justify-content-md-center" style="padding-bottom: 20px"><h2>VA Checker : {{ place.name }}</h2></div>
 
     {% if res.state != "begin" %}
         {% if res.state == "cardnotfound" %}
@@ -34,7 +34,7 @@
         {% endif %}
     {% endif %}
     <div class="row justify-content-md-center">
-        <div class="col-6">
+        <div class="col">
             <div class="card text-center">
                 <div class="card-header">
                     Vérifier un passage
