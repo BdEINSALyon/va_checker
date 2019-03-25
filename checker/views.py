@@ -16,7 +16,6 @@ def add_check(request, pk, screen_token=None):
         url_refresh = reverse("add_check", args=[check_place.pk])
     else:
         url_refresh = reverse("screen", args=[screen_token])
-    form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
     res={}
     if form.is_valid():
         res['state']=True
@@ -26,7 +25,6 @@ def add_check(request, pk, screen_token=None):
         api=AdhesionAPI()
         card=api.get_infos_card(card_number)
         if(card is not None):
-
             res['first_name'] = card['first_name']
             res['last_name'] = card['last_name']
             res['gender'] = card['gender']
@@ -58,7 +56,6 @@ def add_check(request, pk, screen_token=None):
             res['state'] = "cardnotfound"
     else:
         res['state']="begin"
-    form.fields['card_number'].widget.attrs.update({'autofocus': 'autofocus','required': 'required', 'placeholder': 'Numéro de carte VA'})
     return render(request, 'checker/add_check_form.html',
                   {'form': form, 'place': check_place, 'res': res, 'url_refresh': url_refresh})
 

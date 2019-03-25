@@ -52,4 +52,11 @@
             </div>
         </div>
     </div>
+    <script>
+        function set_focus() {
+            document.getElementById("{{ form.card_number.id_for_label }}").focus();
+        }
+
+        $(window).click(set_focus);
+        set_focus()</script>
 {% endblock %}
