@@ -1,10 +1,15 @@
+from django.db.models import Count
+from django.db.models.functions import TruncHour, TruncQuarter, TruncMinute
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.timezone import localtime
 from django.views.decorators.cache import cache_control
+from django.views.generic import TemplateView, FormView
+from django.views.generic.base import ContextMixin
 
 from checker.adhesion_api import AdhesionAPI
-from .forms import AddCheckForm
+from .forms import AddCheckForm, FilterForm, debut_ce_mois, fin_ce_mois
 from .models import CheckPlace, Check, Screen
 
 
@@ -67,3 +72,39 @@ def screen(request, token_screen):
         return add_check(request, screen[0].check_place.pk, screen[0].token)
     else:
         return render(request, 'checker/display_new_screen.html', {"token": token_screen})
+
+def stats():
+    qs = Check.objects.filter(check_place=CheckPlace.objects.first())
+    qs.annotate(hour=TruncHour('created_at')).values('hour').annotate(total=Count('id')).order_by('hour')
+
+def stats(request, checkplace:int):
+    qs = Check.objects.filter(check_place=checkplace)
+    if request.method=='GET':
+        qs = qs.filter(created_at__month=localtime().month)
+        form = FilterForm()
+    elif request.method=='POST':
+        form = FilterForm(request.POST)
+        form.is_valid()
+        qs = qs.filter(created_at__gte=form.cleaned_data.get('start', debut_ce_mois()), created_at__lte=form.cleaned_data.get('end',fin_ce_mois()))
+    return render(request, 'checker/stats.html', {
+        'form':form,
+        'checks':qs.annotate(hour=TruncHour('created_at')).values('hour').annotate(total=Count('id')).order_by('hour')
+    })
+
+
+
+class StatsView(TemplateView):
+    template_name = 'checker/stats.html'
+
+    def get_context_data(self, **kwargs):
+        from django.http import QueryDict
+        opts:QueryDict = self.request.GET
+        lieu = self.kwargs.get('checkplace', 1)
+        debut = opts.get('start')
+        fin = opts.get('end')
+        from django.db.models import QuerySet
+        qs:QuerySet = Check.objects.filter(check_place=lieu, created_at__gte=debut, created_at__lte=fin)
+        if jour is not None:
+            qs = qs.filter(check_place__day=jour)
+        kwargs['checks'] = qs.annotate(hour=TruncHour('created_at')).values('hour').annotate(total=Count('id')).order_by('hour')
+        return super().get_context_data(**kwargs)
