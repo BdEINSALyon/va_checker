@@ -18,7 +18,9 @@
                             <tr>
                                 <td>{{ check_place.name }}</td>
                                 <td><a href="{% url "add_check" check_place.pk %}">Lien</a></td>
-                                <td>Coming</td>
+                                <td>
+                                    <a href="{% url 'stats' check_place.pk %}">Voir</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </table>

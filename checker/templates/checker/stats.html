@@ -1,67 +1,86 @@
 {% extends 'base.html' %}
 {% block content %}
+     <a class="btn btn-secondary text-white" href="{{ form.prec.value }}">
+    <i class="fa fa-arrow-left"></i>Retour
+    </a>
 
-    <form method="post" action="">
-                        {% csrf_token %}
-    <div class="form-group">
-        <input type="text" value="a" name="b" id="c" class="form-control"/>
-        <label for="c">aaa</label>
-  </div>
-        {{ form }}
-                        <button class="btn btn-primary">Filtrer</button>
-                    </form>
+<script>
+function goBack() {
+  window.history.back();
+}
+</script>
+    <header class="center header text-center">
+    <div class="row">
+        <div class="col-lg-2">
+                    <img src="https://logos.bde-insa-lyon.fr/bde/bde.svg" alt="" height="110em" style="display: inline-block">
+        </div>
+        <div class="col-lg-9">
+                    <h1>Statistiques pour {{ place }}</h1>
+        </div>
+    </div>
+    </header>
 
-    <script>
-    $('#picker').datepicker({preset: 'bs4'})
-    </script>
+    <canvas id="bde-chart">
+        <p>test text</p>
+    </canvas> <!-- le graphique va dans le canvas -->
 
-    <canvas id="bde-chart"></canvas>
+    <div class="card" style="width: min-content">
+        <form method="post" action="" class="card-body">
+            <h5 class="card-title">Filtrage par date</h5>
+            {% csrf_token %}
+            {{ form }}
+            <br>
+            <button class="btn btn-primary">Filtrer</button>
+        </form>
+    </div>
+    <br>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <script src="https://cdn.rawgit.com/HubSpot/tether/v1.2.0/dist/js/tether.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/picker.js@0.1.11/dist/picker.umd.min.js"></script>
-    <script>
-    var canvas = document.getElementById("bde-chart").getContext('2d');
-    var graphBdE = new Chart(canvas, {
-    // The type of chart we want to create
-    type: 'bar',
-    // The data for our dataset
-    data: {
-        labels : [
-            {% for check in checks %}
-            ' {{ check.hour }} ',
-            {% endfor %}
-        ],
-        datasets: [{
-            label: 'Ventes',
-            backgroundColor: 'cadetblue',
-            borderColor: 'teal',
-            data: [
-                {% for vente in checks %}
-                    {{ vente.total }} ,
-                {% endfor %}
-            ]
-        },
-        ]
-    },
 
-    // Configuration options go here
-    options: {
-        elements: {
-            line: {
-                tension: 0
-            }
-        },
-        scales: {
-            yAxes: [{
-                ticks: {
-                    // Include a dollar sign in the ticks
-                    callback: function(value, index, values) {
-                        return value+' scan/h';
+    <script>
+        var canvas = document.getElementById("bde-chart").getContext('2d');
+        var graphBdE = new Chart(canvas, {
+            // The type of chart we want to create
+            type: 'bar',
+            // The data for our dataset
+            data: {
+                labels: [
+                    {% for check in checks %}
+                        ' {{ check.hour }} ',
+                    {% endfor %}
+                ],
+                datasets: [{
+                    label: 'Ventes',
+                    backgroundColor: 'cadetblue',
+                    borderColor: 'teal',
+                    data: [
+                        {% for vente in checks %}
+                            {{ vente.total }} ,
+                        {% endfor %}
+                    ]
+                },
+                ]
+            },
+
+            // Configuration options go here
+            options: {
+                elements: {
+                    line: {
+                        tension: 0
                     }
                 },
-                beginAtZero:true,
-            }]
-        }}
-});
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, values) {
+                                return value + ' scan/h';
+                            }
+                        },
+                        beginAtZero: true,
+                    }]
+                }
+            }
+        });
     </script>
 {% endblock %}

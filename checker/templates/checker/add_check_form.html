@@ -52,6 +52,11 @@
             </div>
         </div>
     </div>
+    <br>
+    <a class="btn btn-secondary" href="{% url 'stats' place.id %}">
+        Statistiques
+    <i class="fa fa-arrow-right"></i>
+    </a>
     <script>
         function set_focus() {
             document.getElementById("{{ form.card_number.id_for_label }}").focus();

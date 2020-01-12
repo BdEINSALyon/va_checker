@@ -73,38 +73,17 @@ def screen(request, token_screen):
     else:
         return render(request, 'checker/display_new_screen.html', {"token": token_screen})
 
-def stats():
-    qs = Check.objects.filter(check_place=CheckPlace.objects.first())
-    qs.annotate(hour=TruncHour('created_at')).values('hour').annotate(total=Count('id')).order_by('hour')
-
 def stats(request, checkplace:int):
     qs = Check.objects.filter(check_place=checkplace)
     if request.method=='GET':
         qs = qs.filter(created_at__month=localtime().month)
-        form = FilterForm()
+        form = FilterForm(initial={'prec':request.META.get('HTTP_REFERER','')}) # quand on filtre, ça se rajoute à l'historique, donc c'est chiant pour les écrans de scan
     elif request.method=='POST':
         form = FilterForm(request.POST)
         form.is_valid()
         qs = qs.filter(created_at__gte=form.cleaned_data.get('start', debut_ce_mois()), created_at__lte=form.cleaned_data.get('end',fin_ce_mois()))
     return render(request, 'checker/stats.html', {
         'form':form,
+        'place':CheckPlace.objects.get(id=checkplace),
         'checks':qs.annotate(hour=TruncHour('created_at')).values('hour').annotate(total=Count('id')).order_by('hour')
     })
-
-
-
-class StatsView(TemplateView):
-    template_name = 'checker/stats.html'
-
-    def get_context_data(self, **kwargs):
-        from django.http import QueryDict
-        opts:QueryDict = self.request.GET
-        lieu = self.kwargs.get('checkplace', 1)
-        debut = opts.get('start')
-        fin = opts.get('end')
-        from django.db.models import QuerySet
-        qs:QuerySet = Check.objects.filter(check_place=lieu, created_at__gte=debut, created_at__lte=fin)
-        if jour is not None:
-            qs = qs.filter(check_place__day=jour)
-        kwargs['checks'] = qs.annotate(hour=TruncHour('created_at')).values('hour').annotate(total=Count('id')).order_by('hour')
-        return super().get_context_data(**kwargs)
