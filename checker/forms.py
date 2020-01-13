@@ -26,4 +26,4 @@ class FilterForm(forms.Form):
                                 widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type':'date'}))
     end = forms.DateTimeField(initial=fin_ce_mois, required=True, label="Fin",
                               widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type':'date'}))
-    prec = forms.CharField(initial='.') # sert à stocker le referer pour les écrans de scan tactiles
+    prec = forms.CharField(initial='.', required=False, widget=forms.TextInput(attrs={'hidden':'true'})) # sert à stocker le referer pour les écrans de scan tactiles
